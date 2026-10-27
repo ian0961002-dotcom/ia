@@ -1,36 +1,33 @@
 import sys
 
 def main():
-    # 讀取第一行：位移量 K
-    line1 = sys.stdin.readline()
-    if not line1:
+    line = sys.stdin.readline()
+    if not line:
         return
-    K = int(line1.strip())
+    parts = line.split()
     
-    # 讀取第二行：原始訊息 S (保留所有連續與頭尾空白)
-    S = sys.stdin.readline()
-    # 去除結尾的換行符號，但保留其餘空白
-    if S.endswith('\n'):
-        S = S[:-1]
-    elif S.endswith('\r\n'):
-        S = S[:-2]
+    B = int(parts[0]) # 原餐費
+    N = int(parts[1]) # 人數
+    R = int(parts[2]) # 服務費百分比
+    C = int(parts[3]) # 折價券金額
+    
+    # 服務費為原餐費乘以服務費百分比，不足 1 元的部分捨去 (整數除法)
+    service_charge = (B * R) // 100
+    
+    # 應付總額 = 原餐費 + 服務費 - 折價券金額
+    T = B + service_charge - C
+    if T < 0:
+        T = 0
         
-    result = []
-    for char in S:
-        if 'A' <= char <= 'Z':
-            # 大寫字母加密
-            new_char = chr((ord(char) - ord('A') + K) % 26 + ord('A'))
-            result.append(new_char)
-        elif 'a' <= char <= 'z':
-            # 小寫字母加密
-            new_char = chr((ord(char) - ord('a') + K) % 26 + ord('a'))
-            result.append(new_char)
-        else:
-            # 數字、空白與標點符號保持原樣
-            result.append(char)
-            
-    # 輸出加密後的完整訊息，最後加上換行
-    print("".join(result))
+    # 計算分攤：a 人各付 q 元，b 人各付 q+1 元
+    q = T // N
+    b = T % N
+    a = N - b
+    
+    # 輸出三行
+    print(T)
+    print(f"{q} {a}")
+    print(f"{q+1} {b}")
 
 if __name__ == '__main__':
     main()
